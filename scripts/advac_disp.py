@@ -19,8 +19,7 @@ def findomegasystem(Z):
   expf  = sympy.exp(-1j*omega)
   func  = (expf - Z[0,0])*(expf - Z[1,1]) - Z[1,0]*Z[0,1]
   solsym = sympy.solve(func, omega)
-  sols = np.array([complex(solsym[0]), complex(solsym[1])], dtype='complex')
-  return sols
+  return np.array([complex(solsym[0]), complex(solsym[1])], dtype='complex')
 
 def findomega(Z):
   assert np.size(Z)==2, 'Not a vector of length 2...'
@@ -28,8 +27,7 @@ def findomega(Z):
   expf   = sympy.exp(-1j*omega)
   func   = (expf - Z[0])*(expf - Z[1])
   solsym = sympy.solve(func, omega)
-  sols = np.array([complex(solsym[0]), complex(solsym[1])], dtype='complex')
-  return sols
+  return np.array([complex(solsym[0]), complex(solsym[1])], dtype='complex')
 
 def findroots(R, n):
   assert abs(n - float(int(n)))<1e-14, "n must be an integer or a float equal to an integer"

@@ -24,8 +24,8 @@ ncoarse = 5
 ndof_f = 64
 ndof_c = 32
 
-xaxis_f = np.linspace(0.0, 1.0, ndof_f+1)[0:ndof_f]
-xaxis_c = np.linspace(0.0, 1.0, ndof_c+1)[0:ndof_c]
+xaxis_f = np.linspace(0.0, 1.0, ndof_f+1)[:ndof_f]
+xaxis_c = np.linspace(0.0, 1.0, ndof_c+1)[:ndof_c]
 dx_f = xaxis_f[1] - xaxis_f[0]
 dx_c = xaxis_c[1] - xaxis_c[0]
 
@@ -36,7 +36,7 @@ col    = np.zeros(ndof_f)
 col[0] = 1.0
 col[1] = -1.0
 A_f    = -(1.0/dx_f)*spla.circulant(col)
-A_c    = -(1.0/dx_c)*spla.circulant(col[0:ndof_c])
+A_c = -(1.0/dx_c) * spla.circulant(col[:ndof_c])
 # Second order centered
 #col[1]  = -1.0
 #col[-1] = 1.0

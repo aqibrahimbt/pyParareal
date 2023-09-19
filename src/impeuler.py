@@ -15,7 +15,7 @@ class impeuler(integrator):
 
   def run(self, u0):
     assert isinstance(u0, solution), "Initial value u0 must be an object of type solution"
-    for i in range(0,self.nsteps):
+    for _ in range(0,self.nsteps):
       u0.applyM()
       u0.solve(self.dt)
 

@@ -15,7 +15,7 @@ ncoarse = 1
 nfine   = 40
 nslices = 32
 xaxis = np.linspace(0, 1, nx+1)
-xaxis = xaxis[0:nx]
+xaxis = xaxis[:nx]
 dx = xaxis[1] - xaxis[0]
 y = np.sin(2.0*np.pi*xaxis)
 

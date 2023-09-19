@@ -16,12 +16,7 @@ def riemann_solver_burgers(u_left, u_right):
   if (u_left > u_right):
     # Shock: compute shock speed
     s = 0.5*(u_left + u_right)
-    if (s>0):
-      # rightward traveling shock
-      return u_left
-    else:
-      # leftward traveling shock
-      return u_right
+    return u_left if (s>0) else u_right
   else:
     # Rarefaction wave
     if ((u_left > 0) and (u_right > 0)):
@@ -82,9 +77,7 @@ class solution_riemann(solution):
   def f(self):
     fluxes = np.zeros(self.ndof+1)
     for j in range(0,self.ndof+1):
-      if j==0:
-        u_interface = riemann_solver_burgers(self.y[-1], self.y[0])
-      elif j==self.ndof:
+      if j in [0, self.ndof]:
         u_interface = riemann_solver_burgers(self.y[-1], self.y[0])
       else:
         u_interface = riemann_solver_burgers(self.y[j-1], self.y[j])
@@ -98,11 +91,8 @@ class solution_riemann(solution):
 
   # Overwrite y with solution of M*y-alpha*f(y) = y
   def solve(self, alpha):
-    if not alpha==0.0:
+    if alpha != 0.0:
       raise NotImplementedError("No implicit methods implemented for FVM/Riemann solver")
-    else:
-      # no mass matrix, so nothing to do
-      pass
 
   # Return inf norm of y
   def norm(self):

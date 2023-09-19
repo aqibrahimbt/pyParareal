@@ -55,7 +55,7 @@ for i in range(0,4):
                    [H*1j*k_vec[i], 0, 0]], dtype = 'complex')
 
   stab_ex         = linalg.expm(Lmat*Tend)
-  
+
   # if i==0, compute targets from contiuous stability function
   stab_ex_unit = linalg.expm(Lmat)
   D_unit, V_unit = np.linalg.eig(stab_ex_unit)
@@ -71,10 +71,10 @@ for i in range(0,4):
     warnings.warn("matrices D and Vinv do not commute: %.3E" % err_commute)
   S    = np.zeros(3, dtype = 'complex')
   for j in range(0,3):
-    print ("correct value: %s" % D_unit[j])
-    print ("target value: %s"  % targets[j,i])
+    print(f"correct value: {D_unit[j]}")
+    print(f"target value: {targets[j, i]}")
     S[j] = normalise(D[j], Tend, targets[j,i])
-    print ("selected value: %s" % S[j])
+    print(f"selected value: {S[j]}")
     print ("\n")
     # Set targets for next step of loop
     if i<Nsamples-1:

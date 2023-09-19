@@ -16,11 +16,11 @@ class trapezoidal(integrator):
 
   def run(self, u0):
     assert isinstance(u0, solution), "Initial value u0 must be an object of type solution"
-    for i in range(0,self.nsteps):
+    for _ in range(0,self.nsteps):
       utemp = copy.deepcopy(u0)
       utemp.f()
       u0.applyM()
-      u0.axpy(0.5*self.dt, utemp)  
+      u0.axpy(0.5*self.dt, utemp)
       u0.solve(0.5*self.dt)
 
   #

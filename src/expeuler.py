@@ -15,7 +15,7 @@ class expeuler(integrator):
 
   def run(self, u0):
     assert isinstance(u0, solution), "Initial value u0 must be an object of type solution"
-    for i in range(0,self.nsteps):
+    for _ in range(0,self.nsteps):
       fu0 = copy.deepcopy(u0)
       fu0.f()
       u0.applyM()
