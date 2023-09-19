@@ -15,7 +15,7 @@ class solution(object):
     self.y    = np.reshape(y, (np.shape(y)[0], 1))
     self.ndof = np.size(y)
     self.M = M
-    if not (self.M is None):
+    if self.M is not None:
       assert np.array_equal( np.shape(M), [self.ndof, self.ndof]), "Matrix M does not match size of argument y"
 
   # Overwrite y with a*x+y
@@ -35,7 +35,7 @@ class solution(object):
 
   # Overwrite y with My
   def applyM(self):
-    if not (self.M is None):
+    if self.M is not None:
       self.y = self.M.dot(self.y)
     # else do nothing as this assume M is the identiy
 
@@ -49,10 +49,7 @@ class solution(object):
     
   # Return mass matrix
   def getM(self):
-    if self.M is None:
-      return sparse.eye(self.ndof, format="csr")
-    else:
-      return self.M
+    return sparse.eye(self.ndof, format="csr") if self.M is None else self.M
     
   # Apply matrix
   def apply_matrix(self, A):

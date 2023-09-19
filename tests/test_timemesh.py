@@ -107,14 +107,14 @@ class TestTimemesh(unittest.TestCase):
   # run_coarse is callable and provides expected output at very end
   def test_runcoarse(self):
     tm = timemesh(self.tstart, self.tend, self.nslices, impeuler, impeuler, self.nfine, self.ncoarse, 1e-10, 5, self.u0fine, self.u0coarse)
-    
+
     # Run the coarse propagator but with the initial value given by u0fine
     tm.run_coarse(self.u0fine)
 
     # get the matrix that represents the coarse propagator but then apply it to propagate the initial value u0fine
     Mat = tm.get_coarse_matrix(self.u0coarse)
     b = np.zeros((self.nslices+1)*self.ndof_f)
-    b[0:self.ndof_f] = self.u0_f
+    b[:self.ndof_f] = self.u0_f
     u = linalg.spsolve(Mat, b)
     # get the last ndof_f elements; then convert into column vector
     uend = np.atleast_2d(u[-self.ndof_f:]).T
@@ -126,14 +126,14 @@ class TestTimemesh(unittest.TestCase):
   def test_runcoarsewithmatrix(self):
     dt = (self.tend - self.tstart)/(float(self.nslices)*float(self.ncoarse))
     mat = 1.0/(1.0 - dt)*sparse.eye(self.ndof_c, format="csc")
-    
+
     # passing a matrix as coarse propagator creates a special_integrator that uses the matrix as stability function; in this case, the matrix that defines the problem is not used at all.
     tm = timemesh(self.tstart, self.tend, self.nslices, impeuler, mat, self.nfine, self.ncoarse, 1e-10, 5, self.u0fine, self.u0coarse)
     tm.run_coarse(self.u0fine)
 
     Mat = tm.get_coarse_matrix(self.u0coarse)
     b = np.zeros((self.nslices+1)*self.ndof_f)
-    b[0:self.ndof_f] = self.u0_f
+    b[:self.ndof_f] = self.u0_f
     u = linalg.spsolve(Mat, b)
     uend = np.atleast_2d(u[-self.ndof_f:]).T
     err = np.linalg.norm(uend - tm.get_coarse_value(self.nslices-1).y, np.inf)
@@ -142,12 +142,12 @@ class TestTimemesh(unittest.TestCase):
   # run_fine is callable and provides expected output at very end
   def test_runfine(self):
     tm = timemesh(self.tstart, self.tend, self.nslices, impeuler, impeuler, self.nfine, self.ncoarse, 1e-10, 5, self.u0fine, self.u0coarse)
-    
+
     tm.run_fine(self.u0fine)
     Mat = tm.get_fine_matrix(self.u0fine)
-    
+
     b = np.zeros((self.nslices+1)*self.ndof_f)
-    b[0:self.ndof_f] = self.u0_f
+    b[:self.ndof_f] = self.u0_f
     u = linalg.spsolve(Mat, b)
     uend = np.atleast_2d(u[-self.ndof_f:]).T
     err = np.linalg.norm(uend - tm.get_fine_value(self.nslices-1).y, np.inf)

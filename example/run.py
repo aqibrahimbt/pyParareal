@@ -71,7 +71,7 @@ dx = x[1]-x[0]
 tmax  = 16  # Final time
 #N    = 100  # number grid points in time
 #dt   = tmax/float(N)
-nproc = int(tmax)
+nproc = tmax
 nfine = 10
 ncoarse = 2
 
@@ -100,15 +100,15 @@ def run_parareal(uhat, D, k):
   para = parareal(tstart=0.0, tend=tmax, nslices=nproc, fine=intexact, coarse=impeuler, nsteps_fine=nfine, nsteps_coarse=ncoarse, tolerance=0.0, iter_max=k, u0 = sol)
   stab_coarse = para.timemesh.slices[0].get_coarse_update_matrix(sol)
   stab_ex     = np.exp(D)
-  
-  if artificial_coarse==2:
-    stab_tailor = abs(stab_coarse[0,0])*np.exp(1j*np.angle(stab_ex)) # exact phase speed
-  elif artificial_coarse==1:
+
+  if artificial_coarse == 1:
     stab_tailor = abs(stab_ex)*np.exp(1j*np.angle(stab_coarse[0,0])) # exact amplification factor
 
+  elif artificial_coarse == 2:
+    stab_tailor = abs(stab_coarse[0,0])*np.exp(1j*np.angle(stab_ex)) # exact phase speed
   # If some artificial propagator is used, need to re-compute Parareal stability matrix with newly designed
   # stability matrix
-  if not artificial_coarse == 0:
+  if artificial_coarse != 0:
     stab_tailor = sp.csc_matrix(np.array([stab_tailor], dtype='complex'))
     para = parareal(tstart=0.0, tend=tmax, nslices=nproc, fine=intexact, coarse=stab_tailor, nsteps_fine=nfine, nsteps_coarse=1, tolerance=0.0, iter_max=k, u0 = sol)
 
@@ -130,9 +130,39 @@ for k in range(0,3):
 rcParams['figure.figsize'] = 3.54, 3.54
 fs = 8
 fig1 = plt.figure()
-plt.plot(x, np.fft.ifft(yend[0,:]).real,  '-s', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[0]), markevery=(1,6), mew=1.0, markersize=fs/2)
-plt.plot(x, np.fft.ifft(yend[1,:]).real,  '-d', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[1]), markevery=(3,6), mew=1.0, markersize=fs/2)
-plt.plot(x, np.fft.ifft(yend[2,:]).real,  '-x', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[2]), markevery=(5,6), mew=1.0, markersize=fs/2)
+plt.plot(
+    x,
+    np.fft.ifft(yend[0, :]).real,
+    '-s',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[0])}',
+    markevery=(1, 6),
+    mew=1.0,
+    markersize=fs / 2,
+)
+plt.plot(
+    x,
+    np.fft.ifft(yend[1, :]).real,
+    '-d',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[1])}',
+    markevery=(3, 6),
+    mew=1.0,
+    markersize=fs / 2,
+)
+plt.plot(
+    x,
+    np.fft.ifft(yend[2, :]).real,
+    '-x',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[2])}',
+    markevery=(5, 6),
+    mew=1.0,
+    markersize=fs / 2,
+)
 plt.plot(x, np.fft.ifft(uhat0).real, '--', color='k', linewidth=1.5, label='Exact')
 plt.xlim([x[0], x[-1]])
 plt.ylim([-.2, 1.4])
@@ -154,9 +184,39 @@ yend[2,:] = np.around(np.fft.fftshift(yend[2,:]), 10)
 
 fig2 = plt.figure()
 plt.semilogy(xi, np.absolute(uhat0[m/2:m])/m, '--', color='k', linewidth=1.5, label='Exact')
-plt.semilogy(xi, np.absolute(yend[0,m/2:m])/m, '-s', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[0]), markevery=(1,3), mew=1.0, markersize=fs/2)
-plt.semilogy(xi, np.absolute(yend[1,m/2:m])/m, '-d', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[1]), markevery=(2,3), mew=1.0, markersize=fs/2)
-plt.semilogy(xi, np.absolute(yend[2,m/2:m])/m, '-x', color='r', linewidth=1.5, label='Parareal k='+str(Kiter_v[2]), markevery=(3,3), mew=1.0, markersize=fs/2)
+plt.semilogy(
+    xi,
+    np.absolute(yend[0, m / 2:m]) / m,
+    '-s',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[0])}',
+    markevery=(1, 3),
+    mew=1.0,
+    markersize=fs / 2,
+)
+plt.semilogy(
+    xi,
+    np.absolute(yend[1, m / 2:m]) / m,
+    '-d',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[1])}',
+    markevery=(2, 3),
+    mew=1.0,
+    markersize=fs / 2,
+)
+plt.semilogy(
+    xi,
+    np.absolute(yend[2, m / 2:m]) / m,
+    '-x',
+    color='r',
+    linewidth=1.5,
+    label=f'Parareal k={str(Kiter_v[2])}',
+    markevery=(3, 3),
+    mew=1.0,
+    markersize=fs / 2,
+)
 plt.xlabel('Wave number', fontsize=fs, labelpad=0.25)
 plt.ylabel(r'abs($\hat{u}$)')
 plt.xticks([0.0, 0.1, 0.3], fontsize=fs)

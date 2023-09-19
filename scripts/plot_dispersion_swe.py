@@ -26,8 +26,7 @@ def solve_omega(Z):
   solsym = sympy.solve(func, omega)
   sol0 = complex(solsym[0])
   sol1 = complex(solsym[1])
-  sol2 = complex(solsym[2])
-  return sol2
+  return complex(solsym[2])
 
 def findroots(R, n):
   assert abs(n - float(int(n)))<1e-14, "n must be an integer or a float equal to an integer"

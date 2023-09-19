@@ -8,13 +8,10 @@ import numpy as np
 class parareal(object):
 
     def __init__(self, tstart, tend, nslices, fine, coarse, nsteps_fine, nsteps_coarse, tolerance, iter_max, u0, u0coarse = None):
-      assert isinstance(u0, solution), "Argument u0 must be an object of type solution"
-      self.u0 = u0
-      if (u0coarse is None):
-        self.u0coarse = copy.deepcopy(u0)
-      else:
-        self.u0coarse = u0coarse
-      self.timemesh = timemesh(tstart, tend, nslices, fine, coarse, nsteps_fine, nsteps_coarse, tolerance, iter_max, self.u0, self.u0coarse)
+        assert isinstance(u0, solution), "Argument u0 must be an object of type solution"
+        self.u0 = u0
+        self.u0coarse = copy.deepcopy(u0) if (u0coarse is None) else u0coarse
+        self.timemesh = timemesh(tstart, tend, nslices, fine, coarse, nsteps_fine, nsteps_coarse, tolerance, iter_max, self.u0, self.u0coarse)
 
     '''
     Execute the Parareal iteration

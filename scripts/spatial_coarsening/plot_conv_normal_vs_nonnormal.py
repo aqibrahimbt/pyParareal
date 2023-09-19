@@ -31,7 +31,7 @@ ndof_c_v = [32, 48, 63, 64]
 #ndof_f = 16
 #ndof_c_v = [8, 12, 15, 16]
 
-xaxis_f = np.linspace(0.0, 2.0, ndof_f+1)[0:ndof_f]
+xaxis_f = np.linspace(0.0, 2.0, ndof_f+1)[:ndof_f]
 dx_f = xaxis_f[1] - xaxis_f[0]
 u0_f   = uex(xaxis_f, 0.0)
 col    = np.zeros(ndof_f)
@@ -57,7 +57,7 @@ elif problem==3:
   A_f = (1/dx_f**2)*spla.circulant(col)
 else:
   quit()
-  
+
 A_f = sp.csc_matrix(A_f)
 D = A_f*A_f.H - A_f.H*A_f
 print("Normality number: %5.3f" % np.linalg.norm(D.todense()))
@@ -68,31 +68,28 @@ defect_l2  = np.zeros((4,maxiter+1))
 for nn in range(4):
 
   ndof_c = ndof_c_v[nn]
-  xaxis_c = np.linspace(0.0, 2.0, ndof_c+1)[0:ndof_c]
+  xaxis_c = np.linspace(0.0, 2.0, ndof_c+1)[:ndof_c]
   dx_c = xaxis_c[1] - xaxis_c[0]
   u0_c   = uex(xaxis_c, 0.0)
   col    = np.zeros(ndof_c)
-  
-  if problem==1:
+
+  if problem == 1:
     # First order upwind
     col[0] = 1.0
     col[1] = -1.0
-    A_c    = -(1.0/dx_c)*spla.circulant(col[0:ndof_c])
-    # non-periodic BC instead
-    #A_c[0,-1] = 0.0
-  # Second order centered
-  elif problem==2:
+    A_c = -(1.0/dx_c) * spla.circulant(col[:ndof_c])
+  elif problem == 2:
     col = np.zeros(ndof_c)
     col[1] = -1.0
     col[-1] = 1.0
     A_c = -(1.0/(2.0*dx_c))*spla.circulant(col)
-  elif problem==3:
+  elif problem == 3:
     col = np.zeros(ndof_c)
     col[0] = -2.0
     col[1] = 1.0
     col[-1] = 1.0
     A_c = (1/dx_c**2)*spla.circulant(col)
-    
+
   u0coarse = solution_linear(u0_c, A_c)
 
   if problem==1:
@@ -122,12 +119,26 @@ for nn in range(4):
     defect_inf[nn,k+1] = np.linalg.norm(u_para_new - u, np.inf)
     defect_l2[nn,k+1]  = np.linalg.norm(u_para_old - u, 2)
     u_para_old = np.copy(u_para_new)
-  
+
 fig = plt.figure(1)
-plt.semilogy(range(maxiter+1), defect_l2[0,:], 'bo-', label='m='+str(ndof_c_v[0]))
-plt.semilogy(range(maxiter+1), defect_l2[1,:], 'rx-', label='m='+str(ndof_c_v[1]))
-plt.semilogy(range(maxiter+1), defect_l2[2,:], 'cd-', label='m='+str(ndof_c_v[2]))
-plt.semilogy(range(maxiter+1), np.zeros(maxiter+1)+defect_l2[3,0], 'k+-', label='m=n='+str(ndof_c_v[3]))
+plt.semilogy(range(maxiter + 1),
+             defect_l2[0, :],
+             'bo-',
+             label=f'm={str(ndof_c_v[0])}')
+plt.semilogy(range(maxiter + 1),
+             defect_l2[1, :],
+             'rx-',
+             label=f'm={str(ndof_c_v[1])}')
+plt.semilogy(range(maxiter + 1),
+             defect_l2[2, :],
+             'cd-',
+             label=f'm={str(ndof_c_v[2])}')
+plt.semilogy(
+    range(maxiter + 1),
+    np.zeros(maxiter + 1) + defect_l2[3, 0],
+    'k+-',
+    label=f'm=n={str(ndof_c_v[3])}',
+)
 #plt.semilogy(range(maxiter+1), defect_l2[0,:],  'b--')
 #plt.semilogy(range(maxiter+1), defect_l2[1,:],  'r--')
 #plt.semilogy(range(maxiter+1), defect_l2[2,:],  'c--')

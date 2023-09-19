@@ -88,7 +88,7 @@ class TestParareal(unittest.TestCase):
     
   # Test matrix Parareal
   def test_pararealmatrixmultiple(self):
-    niter = np.random.randint(2,8) 
+    niter = np.random.randint(2,8)
     para = parareal(self.tstart, self.tend, self.nslices, impeuler, impeuler, self.nfine, self.ncoarse, 0.0, niter, self.u0)
     Pmat, Bmat = para.get_parareal_matrix()
     bvec = np.zeros((self.ndof_f*(self.nslices+1),1))
@@ -96,7 +96,7 @@ class TestParareal(unittest.TestCase):
     # Perform one coarse step by matrix multiplication
     y_mat = Bmat@bvec
     # Perform niter Parareal step in matrix form
-    for i in range(0,niter):
+    for _ in range(0,niter):
       y_mat = Pmat@y_mat + Bmat@bvec
     para.run()
     y_para = np.zeros((self.ndof_f*(self.nslices+1),1))

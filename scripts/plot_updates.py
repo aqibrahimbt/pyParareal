@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     Nx = 200
     x = np.linspace(0,20,Nx+1,endpoint=False)
-    x = x[0:Nx]
+    x = x[:Nx]
 
     Nk    = 4
     k_vec = np.linspace(0, np.pi, Nk+1, endpoint=False)
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     k_ind = 3
     k     = k_vec[k_ind]
 
-    Tend    = 16.0    
+    Tend    = 16.0
     nslices = 16
     U_speed = 1.0
     nu      = 0.0
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     rcParams['figure.figsize'] = 7.5, 7.5
 
     fig = plt.figure()
-    y_old = 0.0*x  
+    y_old = 0.0*x
     for k in range(3,4):
       stab_para = para.get_parareal_stab_function(k)
       y_new = (stab_para[0,0]*y_start).real

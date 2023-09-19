@@ -37,33 +37,33 @@ if __name__ == "__main__":
     svds = np.zeros((3,np.size(k_vec)))
 
     for j in range(3):
-      for i in range(0,np.size(k_vec)):
-        waveno = k_vec[i]
-        symb = -(1j*U_speed*waveno + nu*waveno**2)
-        symb_coarse = symb
-        #    symb_coarse = -(1.0/dx)*(1.0 - np.exp(-1j*waveno*dx))
-        
-        stab_ex = np.exp(symb)
-        
-        # Solution objects define the problem
-        u0      = solution_linear(u0_val, np.array([[symb]],dtype='complex'))
-        ucoarse = solution_linear(u0_val, np.array([[symb_coarse]],dtype='complex'))
-        para = parareal(0.0, Tend, nslices, intexact, impeuler, nfine, ncoarse, 0.0, 0, u0)
-        stab_coarse = para.timemesh.slices[0].get_coarse_update_matrix(ucoarse)
+        for i in range(0,np.size(k_vec)):
+            waveno = k_vec[i]
+            symb = -(1j*U_speed*waveno + nu*waveno**2)
+            symb_coarse = symb
+            #    symb_coarse = -(1.0/dx)*(1.0 - np.exp(-1j*waveno*dx))
 
-        if j==2:
-          stab_tailor = abs(stab_ex)*np.exp(1j*np.angle(stab_coarse[0,0])) # exact amplification factor
-        elif j==1:
-          stab_tailor = abs(stab_coarse[0,0])*np.exp(1j*np.angle(stab_ex)) # exact phase speed
-        
-        if not j==0:
-          # Re-Create the parareal object to be used in the remainder
-          stab_tailor = sparse.csc_matrix(np.array([stab_tailor], dtype='complex'))
-        
-          # Use tailored integrator as coarse method
-          para = parareal(0.0, Tend, nslices, intexact, stab_tailor, nfine, ncoarse, 0.0, 1, u0)
+            stab_ex = np.exp(symb)
 
-        svds[j,i]         = para.get_max_svd(ucoarse=ucoarse)
+            # Solution objects define the problem
+            u0      = solution_linear(u0_val, np.array([[symb]],dtype='complex'))
+            ucoarse = solution_linear(u0_val, np.array([[symb_coarse]],dtype='complex'))
+            para = parareal(0.0, Tend, nslices, intexact, impeuler, nfine, ncoarse, 0.0, 0, u0)
+            stab_coarse = para.timemesh.slices[0].get_coarse_update_matrix(ucoarse)
+
+            if j==2:
+              stab_tailor = abs(stab_ex)*np.exp(1j*np.angle(stab_coarse[0,0])) # exact amplification factor
+            elif j==1:
+              stab_tailor = abs(stab_coarse[0,0])*np.exp(1j*np.angle(stab_ex)) # exact phase speed
+
+            if j != 0:
+                # Re-Create the parareal object to be used in the remainder
+                stab_tailor = sparse.csc_matrix(np.array([stab_tailor], dtype='complex'))
+
+                # Use tailored integrator as coarse method
+                para = parareal(0.0, Tend, nslices, intexact, stab_tailor, nfine, ncoarse, 0.0, 1, u0)
+
+            svds[j,i]         = para.get_max_svd(ucoarse=ucoarse)
 
     rcParams['figure.figsize'] = 3.54, 3.54
     fs = 8

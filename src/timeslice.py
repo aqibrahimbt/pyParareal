@@ -113,7 +113,4 @@ class timeslice(object):
   def is_converged(self):
     # update residual
     self.set_residual()
-    if ( (self.get_residual()<self.tolerance) or (self.iteration>=self.iter_max) ):
-      return True
-    else:
-      return False
+    return self.get_residual()<self.tolerance or self.iteration>=self.iter_max
